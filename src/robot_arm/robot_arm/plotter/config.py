@@ -33,7 +33,7 @@ class PlotterParams:
 
     circle_center: XYZ = (0.2, 0.0, 0.02)
     radius: float = 0.025
-    delay: float = 0.2
+    delay: float = 0.05
     num_points: int = 200
 
     switch_on_position: XYZ = (0.2, 0.0, 0.01)

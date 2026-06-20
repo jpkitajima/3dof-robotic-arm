@@ -22,7 +22,7 @@ setup(
         ('share/robot_arm/urdf', ['urdf/robot_arm.urdf']),
         ('share/robot_arm/meshes', glob('meshes/*.stl')),
     ],
-    install_requires=['setuptools', 'aiohttp'],
+    install_requires=['setuptools', 'aiohttp', 'svgpathtools'],
     zip_safe=True,
     maintainer='Kitajima',
     maintainer_email='noreply@example.com',

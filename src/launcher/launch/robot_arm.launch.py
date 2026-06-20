@@ -24,18 +24,23 @@ def generate_launch_description():
     ld.add_action(DeclareLaunchArgument(
         name='rvizconfig', default_value=default_rviz_config_path,
         description='Absolute path to RViz config file'))
-    ld.add_action(DeclareLaunchArgument(
-        name='gui', default_value='true', choices=['true', 'false'],
-        description='Flag to enable joint_state_publisher_gui'))
 
+    # Use description.launch.py (robot_state_publisher only) instead of
+    # display.launch.py to avoid joint_state_publisher competing on /joint_states.
+    # servo_adapter_dummy is the sole /joint_states publisher.
     ld.add_action(IncludeLaunchDescription(
-        PathJoinSubstitution([FindPackageShare('urdf_launch'), 'launch', 'display.launch.py']),
+        PathJoinSubstitution([FindPackageShare('urdf_launch'), 'launch', 'description.launch.py']),
         launch_arguments={
             'urdf_package': 'robot_arm',
             'urdf_package_path': LaunchConfiguration('model'),
-            'rviz_config': LaunchConfiguration('rvizconfig'),
-            'jsp_gui': LaunchConfiguration('gui'),
         }.items()
+    ))
+
+    ld.add_action(Node(
+        package='rviz2',
+        executable='rviz2',
+        output='screen',
+        arguments=['-d', LaunchConfiguration('rvizconfig')],
     ))
 
     # --- Robot arm nodes ---
