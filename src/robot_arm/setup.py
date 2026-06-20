@@ -19,6 +19,8 @@ setup(
             'share/' + package_name + '/resource/plotter',
             glob('robot_arm/plotter/resources/*.svg'),
         ),
+        ('share/robot_arm/urdf', ['urdf/robot_arm.urdf']),
+        ('share/robot_arm/meshes', glob('meshes/*.stl')),
     ],
     install_requires=['setuptools', 'aiohttp'],
     zip_safe=True,

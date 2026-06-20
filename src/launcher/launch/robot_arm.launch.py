@@ -1,10 +1,45 @@
 #!/usr/bin/env python3
 
 from launch import LaunchDescription
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
+from launch_ros.substitutions import FindPackageShare
+
 
 def generate_launch_description():
-    return LaunchDescription([
+    ld = LaunchDescription()
+
+    # --- URDF / RViz display via urdf_launch ---
+    default_model_path = PathJoinSubstitution(
+        [FindPackageShare('robot_arm'), 'urdf', 'robot_arm.urdf']
+    )
+    default_rviz_config_path = PathJoinSubstitution(
+        [FindPackageShare('launcher'), 'rviz', 'robot_arm.rviz']
+    )
+
+    ld.add_action(DeclareLaunchArgument(
+        name='model', default_value=default_model_path,
+        description='Path to robot URDF file'))
+    ld.add_action(DeclareLaunchArgument(
+        name='rvizconfig', default_value=default_rviz_config_path,
+        description='Absolute path to RViz config file'))
+    ld.add_action(DeclareLaunchArgument(
+        name='gui', default_value='true', choices=['true', 'false'],
+        description='Flag to enable joint_state_publisher_gui'))
+
+    ld.add_action(IncludeLaunchDescription(
+        PathJoinSubstitution([FindPackageShare('urdf_launch'), 'launch', 'display.launch.py']),
+        launch_arguments={
+            'urdf_package': 'robot_arm',
+            'urdf_package_path': LaunchConfiguration('model'),
+            'rviz_config': LaunchConfiguration('rvizconfig'),
+            'jsp_gui': LaunchConfiguration('gui'),
+        }.items()
+    ))
+
+    # --- Robot arm nodes ---
+    nodes = [
 
         Node(
             package='robot_arm',
@@ -55,4 +90,9 @@ def generate_launch_description():
             name='points_manager',
             output='screen'
         ),
-    ])
+    ]
+
+    for node in nodes:
+        ld.add_action(node)
+
+    return ld
