@@ -95,6 +95,14 @@ def generate_launch_description():
             name='points_manager',
             output='screen'
         ),
+
+        Node(
+            package='robot_arm',
+            executable='trajectory_tracker',
+            name='trajectory_tracker',
+            parameters=[{'marker_frame': 'base_link'}],
+            output='screen'
+        ),
     ]
 
     for node in nodes:

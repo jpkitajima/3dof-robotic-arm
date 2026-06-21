@@ -13,7 +13,7 @@
 
   <link name="base_link">
     <visual>
-      <origin rpy="1.57075 0 0" xyz="0 0 0.37"/>
+      <origin rpy="1.57075 0 0" xyz="-0.1011 0.1236 0"/>
       <geometry>
         <mesh filename="package://robot_arm/meshes/link0.stl" scale="0.01 0.01 0.01"/>
       </geometry>
@@ -33,8 +33,7 @@
 
   <joint name="base_to_link1" type="revolute">
     <parent link="base_link"/>
-    <child link="link1"/>
-    <origin xyz="0.1011 -0.1236 0.37"/>
+    <child link="link1"/>    <origin xyz="0 0 0"/>
     <axis xyz="0 0 1"/>
     <limit lower="-1.57" upper="1.57" effort="10" velocity="1"/>
   </joint>

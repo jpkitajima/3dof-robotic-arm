@@ -43,6 +43,7 @@ setup(
             'points_manager = robot_arm.manual_path_programmer.points_manager:main',
             'input_receiver = robot_arm.input_receiver.input_receiver:main',
             'website_input = robot_arm.website_input.website_input:main',
+            'trajectory_tracker = robot_arm.trajectory_tracker.trajectory_tracker:main',
         ],
     },
 )
