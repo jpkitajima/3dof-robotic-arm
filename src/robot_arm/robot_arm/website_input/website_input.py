@@ -15,12 +15,12 @@ except ImportError:  # pragma: no cover
 
 try:
     from .state_machine import ControllerStateDispatcher, parse_controller_state
-    from .utils import _clamp, _resolve_resources_dir
+    from .utils import _resolve_resources_dir
     from .web_server import WebsiteInputWebServer
 except ImportError:  # pragma: no cover
     # Allow running this file directly (outside its package).
     from robot_arm_2.robot_arm.website_input.state_machine import ControllerStateDispatcher, parse_controller_state  # type: ignore
-    from robot_arm_2.robot_arm.website_input.utils import _clamp, _resolve_resources_dir  # type: ignore
+    from robot_arm_2.robot_arm.website_input.utils import _resolve_resources_dir  # type: ignore
     from robot_arm_2.robot_arm.website_input.web_server import WebsiteInputWebServer  # type: ignore
 
 
@@ -32,11 +32,6 @@ class WebsiteInput(Node):
 
         # Match InputConverter topics/services so this virtual controller has
         # the same effect as the physical Xbox controller.
-        self._pub_speed = self.create_publisher(Int32, 'speed', 10)
-        self._pub_turn = self.create_publisher(Int32, 'turn', 10)
-        self._pub_cam_yaw = self.create_publisher(Int32, 'cam_yaw', 10)
-        self._pub_cam_pitch = self.create_publisher(Int32, 'cam_pitch', 10)
-
         self._pub_insert_point_manual_path = self.create_publisher(
             Float32MultiArray,
             'insert_point_manual_path',
@@ -60,7 +55,6 @@ class WebsiteInput(Node):
         self._cli_turn_off_switch = self.create_client(Trigger, 'turn_off_switch')
 
         self._cli_start_manual_path = self.create_client(Trigger, 'start_manual_path')
-        self._cli_start_drawing_art = self.create_client(Trigger, 'start_drawing_art')
         self._cli_start_drawing_circle = self.create_client(Trigger, 'start_drawing_circle')
         self._cli_start_drawing_svg = self.create_client(Trigger, 'start_drawing_svg')
         self._cli_start_drawing_line = self.create_client(Trigger, 'start_drawing_line')
@@ -113,12 +107,6 @@ class WebsiteInput(Node):
 
         self.get_logger().info(f'WebsiteInput ready: http://{self._host}:{self._port}/input')
 
-    def _publish_int32(self, pub, value: int, label: str) -> None:
-        msg = Int32()
-        msg.data = int(value)
-        pub.publish(msg)
-        self.get_logger().debug(f'Published {label}: {msg.data}')
-
     def _call_trigger(self, client, service_name: str) -> None:
         if not client.service_is_ready():
             client.wait_for_service(timeout_sec=10)
@@ -164,9 +152,6 @@ class WebsiteInput(Node):
             return
         if msg_type == 'path_programmer_capture_current_position':
             self.on_path_programmer_capture_current_position()
-            return
-        if msg_type == 'start_drawing_art':
-            self.on_start_drawing_art()
             return
         if msg_type == 'start_drawing_circle':
             self.on_start_drawing_circle()
@@ -238,10 +223,6 @@ class WebsiteInput(Node):
         )
         return
 
-    def on_start_drawing_art(self) -> None:
-        self.get_logger().info('Website action: start drawing art received')
-        self._call_trigger(self._cli_start_drawing_art, 'start_drawing_art')
-
     def on_start_drawing_circle(self) -> None:
         self.get_logger().info('Website action: start drawing circle received')
         self._call_trigger(self._cli_start_drawing_circle, 'start_drawing_circle')
@@ -253,20 +234,6 @@ class WebsiteInput(Node):
     def on_start_drawing_line(self) -> None:
         self.get_logger().info('Website action: start drawing line received')
         self._call_trigger(self._cli_start_drawing_line, 'start_drawing_line')
-
-    def on_lt(self, value: float) -> None:
-        # InputConverter maps LEFT_TRIGGER (-1..1) to 0..-100.
-        # Our web UI defaults triggers to 0 (released), so interpret value as 0..1.
-        t = _clamp(value, 0.0, 1.0)
-        mapped_speed = int(-t * 100)
-        self._publish_int32(self._pub_speed, mapped_speed, 'speed')
-
-    def on_rt(self, value: float) -> None:
-        # InputConverter maps RIGHT_TRIGGER (-1..1) to 0..100.
-        # Our web UI defaults triggers to 0 (released), so interpret value as 0..1.
-        t = _clamp(value, 0.0, 1.0)
-        mapped_speed = int(t * 100)
-        self._publish_int32(self._pub_speed, mapped_speed, 'speed')
 
     def on_lb(self, pressed: bool) -> None:
         if pressed:
@@ -299,30 +266,6 @@ class WebsiteInput(Node):
     def on_switch_off(self, pressed: bool) -> None:
         if pressed:
             self._call_trigger(self._cli_turn_off_switch, 'turn_off_switch')
-
-    def on_dpad_up(self, pressed: bool) -> None:
-        return
-
-    def on_dpad_down(self, pressed: bool) -> None:
-        return
-
-    def on_dpad_left(self, pressed: bool) -> None:
-        return
-
-    def on_dpad_right(self, pressed: bool) -> None:
-        return
-
-    def on_left_stick(self, x: float, y: float) -> None:
-        # InputConverter uses LEFT_STICK_HORIZONTAL mapped to -100..100.
-        mapped_turn = int(_clamp(x, -1.0, 1.0) * 100)
-        self._publish_int32(self._pub_turn, mapped_turn, 'turn')
-
-    def on_right_stick(self, x: float, y: float) -> None:
-        mapped_yaw = int(_clamp(x, -1.0, 1.0) * 100)
-        # Pygame typically reports up as -1, while our web UI reports up as +1.
-        mapped_pitch = int(_clamp(-y, -1.0, 1.0) * 100)
-        self._publish_int32(self._pub_cam_yaw, mapped_yaw, 'cam_yaw')
-        self._publish_int32(self._pub_cam_pitch, mapped_pitch, 'cam_pitch')
 
     def _on_cartesian_xyz_read(self, msg: Float32MultiArray) -> None:
         data = list(msg.data)

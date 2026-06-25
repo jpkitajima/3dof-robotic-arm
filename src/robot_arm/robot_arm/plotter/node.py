@@ -15,7 +15,6 @@ except ImportError:  # pragma: no cover
 from ament_index_python.packages import get_package_share_directory
 from std_msgs.msg import Float32MultiArray
 
-from .art import ArtPointGenerator
 from .circle import CirclePointGenerator
 from .config import PlotterParams
 from .motion import MotionPlanner
@@ -36,7 +35,6 @@ class RobotArmPlotterNode(Node):
         self._manual_path_points: list[tuple[float, float, float]] = []
 
         self._circle_gen = CirclePointGenerator()
-        self._art_gen = ArtPointGenerator()
         self._svg_gen = SvgPointGenerator()
 
         self.publisher_ = self.create_publisher(Float32MultiArray, "cartesian_xyz", 1000)
@@ -54,7 +52,6 @@ class RobotArmPlotterNode(Node):
         )
 
         self.create_service(Trigger, "start_drawing_circle", self.handle_start_drawing_circle)
-        self.create_service(Trigger, "start_drawing_art", self.handle_start_drawing_art)
         self.create_service(Trigger, "start_drawing_svg", self.handle_start_drawing_svg)
         self.create_service(Trigger, "start_drawing_line", self.handle_start_drawing_line)
         self.create_service(Trigger, 'start_manual_path', self.handle_start_manual_path)
@@ -190,19 +187,6 @@ class RobotArmPlotterNode(Node):
 
         response.success = True
         response.message = "Circle drawing complete."
-        return response
-
-    def handle_start_drawing_art(self, request, response):
-        self.get_logger().info("Received request to start drawing art.")
-        points = self._art_gen.generate(
-            borders=self.params.art_borders,
-            distance=self.params.art_distance,
-            num_points=self.params.art_num_points,
-        )
-        self._publish_points(points, self.params.art_delay)
-
-        response.success = True
-        response.message = "Art drawing complete."
         return response
 
     def handle_start_drawing_svg(self, request, response):

@@ -3,14 +3,14 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RC Car / Robot Arm Input</title>
+    <title>3DOF Robotic Arm Controller</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
 
   <body>
     <header>
       <div class="title">
-        <h1>Virtual Xbox Controller</h1>
+        <h1>3DOF Robotic Arm Controller</h1>
         <div class="status" id="status">Connecting…</div>
       </div>
     </header>
@@ -33,34 +33,31 @@
         </section>
 
         <section class="card">
-          <h2>Path Programmer</h2>
-          <div class="row">
-            <button class="btn" id="ppStart">start</button>
-            <button class="btn" id="ppCapture">capture current position</button>
-          </div>
-          <ul class="points-list" id="ppPoints"></ul>
-        </section>
-
-        <section class="card">
-          <h2>Triggers</h2>
-          <div class="grid cols2">
-            <div class="axis">
-              <label><span>LT</span><span class="pill" id="ltVal">0.00</span></label>
-              <input id="lt" type="range" min="-1" max="1" step="0.01" value="0" />
+          <h2>Arm Position</h2>
+          <div class="axis-controls">
+            <div class="axis-control">
+              <span class="axis-control-label">X Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="y">X+</button>
+                <button class="btn" data-btn="a">X-</button>
+              </div>
             </div>
-            <div class="axis">
-              <label><span>RT</span><span class="pill" id="rtVal">0.00</span></label>
-              <input id="rt" type="range" min="-1" max="1" step="0.01" value="0" />
-            </div>
-          </div>
-          <div class="hint">Tip: on touch devices, drag the sliders and sticks. Buttons are press-and-hold.</div>
-        </section>
 
-        <section class="card">
-          <h2>Bumpers</h2>
-          <div class="row">
-            <button class="btn" data-btn="lb">LB</button>
-            <button class="btn" data-btn="rb">RB</button>
+            <div class="axis-control">
+              <span class="axis-control-label">Y Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="x">Y+</button>
+                <button class="btn" data-btn="b">Y-</button>
+              </div>
+            </div>
+
+            <div class="axis-control">
+              <span class="axis-control-label">Z Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="lb">Z+</button>
+                <button class="btn" data-btn="rb">Z-</button>
+              </div>
+            </div>
           </div>
         </section>
 
@@ -71,7 +68,6 @@
             <button class="btn" data-btn="switch_off">Switch Off</button>
           </div>
           <div class="row">
-            <button class="btn" id="drawArt">Draw Art</button>
             <button class="btn" id="drawCircle">Draw Circle</button>
             <button class="btn" id="drawSvg">Draw SVG</button>
             <button class="btn" id="drawLine">Draw Line</button>
@@ -79,68 +75,12 @@
         </section>
 
         <section class="card">
-          <h2>Sticks</h2>
-          <div class="grid cols2">
-            <div>
-              <div class="row" style="justify-content: space-between;">
-                <span class="pill">Left stick</span>
-                <span class="pill" id="lsVal">x:0.00 y:0.00</span>
-              </div>
-              <div class="stick-zone" id="lsZone">
-                <div class="stick-grid"></div>
-                <div class="stick-knob" id="lsKnob"></div>
-              </div>
-            </div>
-            <div>
-              <div class="row" style="justify-content: space-between;">
-                <span class="pill">Right stick</span>
-                <span class="pill" id="rsVal">x:0.00 y:0.00</span>
-              </div>
-              <div class="stick-zone" id="rsZone">
-                <div class="stick-grid"></div>
-                <div class="stick-knob" id="rsKnob"></div>
-              </div>
-            </div>
+          <h2>Path Programmer</h2>
+          <div class="row">
+            <button class="btn" id="ppStart">start</button>
+            <button class="btn" id="ppCapture">capture current position</button>
           </div>
-        </section>
-
-        <section class="card">
-          <h2>Face Buttons</h2>
-          <div class="dpad face-buttons">
-            <div class="spacer"></div>
-            <button class="btn" data-btn="y">Y</button>
-            <div class="spacer"></div>
-
-            <button class="btn" data-btn="x">X</button>
-            <div class="spacer"></div>
-            <button class="btn" data-btn="b">B</button>
-
-            <div class="spacer"></div>
-            <button class="btn" data-btn="a">A</button>
-            <div class="spacer"></div>
-          </div>
-        </section>
-
-        <section class="card">
-          <h2>D-Pad</h2>
-          <div class="dpad">
-            <div class="spacer"></div>
-            <button class="btn small" data-btn="dpad_up">UP</button>
-            <div class="spacer"></div>
-
-            <button class="btn small" data-btn="dpad_left">LEFT</button>
-            <div class="spacer"></div>
-            <button class="btn small" data-btn="dpad_right">RIGHT</button>
-
-            <div class="spacer"></div>
-            <button class="btn small" data-btn="dpad_down">DOWN</button>
-            <div class="spacer"></div>
-          </div>
-
-          <div class="footer">
-            <span class="pill">WebSocket: <code id="wsUrl"></code></span>
-            <button class="btn danger" id="centerAll">Center sticks + reset triggers</button>
-          </div>
+          <ul class="points-list" id="ppPoints"></ul>
         </section>
       </div>
     </main>

@@ -145,6 +145,38 @@ main {
   flex-wrap: wrap;
 }
 
+.axis-controls {
+  display: grid;
+  gap: 12px;
+}
+
+.axis-control {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.03);
+  border: 1px solid rgba(15, 23, 42, 0.10);
+}
+
+.axis-control-label {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22px;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+.axis-control-buttons {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr 1fr;
+}
+
+.axis-control-buttons .btn {
+  width: 100%;
+}
+
 .btn {
   user-select: none;
   -webkit-user-select: none;
@@ -249,19 +281,7 @@ input[type="range"] {
   place-content: center;
 }
 
-.face-buttons {
-  display: grid;
-  gap: 8px;
-  grid-template-columns: 56px 56px 56px;
-  grid-template-rows: 56px 56px 56px;
-  place-content: center;
-}
-
 .dpad .spacer {
-  opacity: 0;
-}
-
-.face-buttons .spacer {
   opacity: 0;
 }
 

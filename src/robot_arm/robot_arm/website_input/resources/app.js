@@ -1,6 +1,4 @@
 const state = {
-  lt: 0,
-  rt: 0,
   buttons: {
     lb: false,
     rb: false,
@@ -10,15 +8,7 @@ const state = {
     y: false,
     switch_on: false,
     switch_off: false,
-    dpad_up: false,
-    dpad_down: false,
-    dpad_left: false,
-    dpad_right: false,
   },
-  sticks: {
-    left: { x: 0, y: 0 },
-    right: { x: 0, y: 0 },
-  }
 };
 
 const els = {
@@ -29,25 +19,12 @@ const els = {
   ppStart: document.getElementById('ppStart'),
   ppCapture: document.getElementById('ppCapture'),
   ppPoints: document.getElementById('ppPoints'),
-  drawArt: document.getElementById('drawArt'),
   drawCircle: document.getElementById('drawCircle'),
   drawSvg: document.getElementById('drawSvg'),
   drawLine: document.getElementById('drawLine'),
-  lt: document.getElementById('lt'),
-  rt: document.getElementById('rt'),
-  ltVal: document.getElementById('ltVal'),
-  rtVal: document.getElementById('rtVal'),
-  lsVal: document.getElementById('lsVal'),
-  rsVal: document.getElementById('rsVal'),
-  lsZone: document.getElementById('lsZone'),
-  rsZone: document.getElementById('rsZone'),
-  lsKnob: document.getElementById('lsKnob'),
-  rsKnob: document.getElementById('rsKnob'),
-  wsUrl: document.getElementById('wsUrl'),
-  centerAll: document.getElementById('centerAll'),
 };
 
-const CARD_ORDER_STORAGE_KEY = 'robot-arm-card-order';
+const CARD_ORDER_STORAGE_KEY = 'robot-arm-card-order-v2';
 
 function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
 
@@ -325,19 +302,6 @@ function bindActionButton(btnEl, actionType) {
   });
 }
 
-function updateTrigger(which) {
-  const el = which === 'lt' ? els.lt : els.rt;
-  const valEl = which === 'lt' ? els.ltVal : els.rtVal;
-  const v = clamp(parseFloat(el.value), -1, 1);
-  state[which] = v;
-  valEl.textContent = v.toFixed(2);
-}
-
-els.lt.addEventListener('input', () => updateTrigger('lt'));
-els.rt.addEventListener('input', () => updateTrigger('rt'));
-updateTrigger('lt');
-updateTrigger('rt');
-
 document.querySelectorAll('[data-btn]').forEach((btn) => {
   bindPressHoldButton(btn, btn.getAttribute('data-btn'));
 });
@@ -356,81 +320,9 @@ if (els.ppCapture) {
   });
 }
 
-bindActionButton(els.drawArt, 'start_drawing_art');
 bindActionButton(els.drawCircle, 'start_drawing_circle');
 bindActionButton(els.drawSvg, 'start_drawing_svg');
 bindActionButton(els.drawLine, 'start_drawing_line');
-
-function setupStick(zoneEl, knobEl, which) {
-  const maxRadius = 0.40; // fraction of half-size
-  let activePointerId = null;
-
-  function setStick(x, y) {
-    // x,y in [-1,1]
-    x = clamp(x, -1, 1);
-    y = clamp(y, -1, 1);
-    state.sticks[which].x = x;
-    state.sticks[which].y = y;
-
-    const rect = zoneEl.getBoundingClientRect();
-    const cx = rect.width / 2;
-    const cy = rect.height / 2;
-    const radius = Math.min(cx, cy) * maxRadius;
-    knobEl.style.left = (cx + x * radius - knobEl.offsetWidth / 2) + 'px';
-    knobEl.style.top = (cy - y * radius - knobEl.offsetHeight / 2) + 'px';
-
-    const text = `x:${x.toFixed(2)} y:${y.toFixed(2)}`;
-    if (which === 'left') els.lsVal.textContent = text;
-    else els.rsVal.textContent = text;
-  }
-
-  function center() { setStick(0, 0); }
-  center();
-
-  zoneEl.addEventListener('pointerdown', (ev) => {
-    ev.preventDefault();
-    activePointerId = ev.pointerId;
-    zoneEl.setPointerCapture(activePointerId);
-  });
-
-  zoneEl.addEventListener('pointermove', (ev) => {
-    if (activePointerId !== ev.pointerId) return;
-    ev.preventDefault();
-
-    const rect = zoneEl.getBoundingClientRect();
-    const nx = (ev.clientX - (rect.left + rect.width / 2)) / (rect.width / 2);
-    const ny = (ev.clientY - (rect.top + rect.height / 2)) / (rect.height / 2);
-
-    // invert Y so up is +1 like typical joystick conventions
-    setStick(nx, -ny);
-  });
-
-  const release = (ev) => {
-    if (activePointerId !== ev.pointerId) return;
-    ev.preventDefault();
-    activePointerId = null;
-    try { zoneEl.releasePointerCapture(ev.pointerId); } catch (_) {}
-    center();
-  };
-
-  zoneEl.addEventListener('pointerup', release);
-  zoneEl.addEventListener('pointercancel', release);
-  zoneEl.addEventListener('pointerleave', release);
-
-  return { center };
-}
-
-const ls = setupStick(els.lsZone, els.lsKnob, 'left');
-const rs = setupStick(els.rsZone, els.rsKnob, 'right');
-
-els.centerAll.addEventListener('click', () => {
-  els.lt.value = '0';
-  els.rt.value = '0';
-  updateTrigger('lt');
-  updateTrigger('rt');
-  ls.center();
-  rs.center();
-});
 
 // Websocket
 let ws = null;
@@ -445,8 +337,6 @@ function setStatus(text) { els.status.textContent = text; }
 
 function connect() {
   const url = wsAddress();
-  els.wsUrl.textContent = url;
-
   ws = new WebSocket(url);
 
   ws.addEventListener('open', () => {
@@ -510,13 +400,7 @@ function buildPayload() {
   return {
     type: 'state',
     ts_ms: Date.now(),
-    lt: state.lt,
-    rt: state.rt,
     buttons: { ...state.buttons },
-    sticks: {
-      left: { ...state.sticks.left },
-      right: { ...state.sticks.right },
-    },
   };
 }
 
