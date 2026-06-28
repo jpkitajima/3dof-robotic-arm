@@ -22,7 +22,7 @@ setup(
         ('share/robot_arm/urdf', ['urdf/robot_arm.urdf']),
         ('share/robot_arm/meshes', glob('meshes/*.stl')),
     ],
-    install_requires=['setuptools', 'aiohttp', 'svgpathtools'],
+    install_requires=['setuptools', 'aiohttp', 'svgpathtools', 'python-st3215'],
     zip_safe=True,
     maintainer='Kitajima',
     maintainer_email='noreply@example.com',
@@ -36,6 +36,7 @@ setup(
     entry_points={
         'console_scripts': [
             'bus_servo_adapter = robot_arm.bus_servo_adapter.bus_servo_adapter:main',
+            'servo_adapter = robot_arm.servo_adapter.servo_adapter:main',
             'servo_adapter_dummy = robot_arm.servo_adapter_dummy.servo_adapter_dummy:main',
             'inverse_kinematics = robot_arm.inverse_kinematics.inverse_kinematics:main',
             'forward_kinematics = robot_arm.forward_kinematics.forward_kinematics:main',

@@ -2,7 +2,9 @@
 
 from launch import LaunchDescription
 from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription
+from launch.conditions import IfCondition
 from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
+from launch.substitutions import PythonExpression
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -24,10 +26,13 @@ def generate_launch_description():
     ld.add_action(DeclareLaunchArgument(
         name='rvizconfig', default_value=default_rviz_config_path,
         description='Absolute path to RViz config file'))
+    ld.add_action(DeclareLaunchArgument(
+        name='servo_adapter_mode', default_value='both',
+        description='Which servo adapter to run: real, dummy, or both'))
 
     # Use description.launch.py (robot_state_publisher only) instead of
     # display.launch.py to avoid joint_state_publisher competing on /joint_states.
-    # servo_adapter_dummy is the sole /joint_states publisher.
+    # servo_adapter_dummy remains the /joint_states publisher for visualization.
     ld.add_action(IncludeLaunchDescription(
         PathJoinSubstitution([FindPackageShare('urdf_launch'), 'launch', 'description.launch.py']),
         launch_arguments={
@@ -39,6 +44,9 @@ def generate_launch_description():
     ld.add_action(Node(
         package='rviz2',
         executable='rviz2',
+        condition=IfCondition(PythonExpression([
+            "'", LaunchConfiguration('servo_adapter_mode'), "' == 'dummy'"
+        ])),
         output='screen',
         arguments=['-d', LaunchConfiguration('rvizconfig')],
     ))
@@ -48,8 +56,21 @@ def generate_launch_description():
 
         Node(
             package='robot_arm',
+            executable='servo_adapter',
+            name='servo_adapter',
+            condition=IfCondition(PythonExpression([
+                "'", LaunchConfiguration('servo_adapter_mode'), "' in ['real', 'both']"
+            ])),
+            output='screen'
+        ),
+
+        Node(
+            package='robot_arm',
             executable='servo_adapter_dummy',
             name='servo_adapter_dummy',
+            condition=IfCondition(PythonExpression([
+                "'", LaunchConfiguration('servo_adapter_mode'), "' in ['dummy', 'both']"
+            ])),
             output='screen'
         ),
 
