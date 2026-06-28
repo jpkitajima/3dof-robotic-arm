@@ -107,10 +107,10 @@ class WebsiteInput(Node):
 
         self.get_logger().info(f'WebsiteInput ready: http://{self._host}:{self._port}/input')
 
-def _call_trigger(self, client, service_name: str) -> None:
-    if not client.service_is_ready():
-        self.get_logger().warn(f'Service {service_name} not available (client not ready).')
-        return
+    def _call_trigger(self, client, service_name: str) -> None:
+        if not client.service_is_ready():
+            self.get_logger().warn(f'Service {service_name} not available (client not ready).')
+            return
 
         req = Trigger.Request()
         future = client.call_async(req)
