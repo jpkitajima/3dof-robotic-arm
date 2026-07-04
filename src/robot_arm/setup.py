@@ -36,7 +36,6 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'bus_servo_adapter = robot_arm.bus_servo_adapter.bus_servo_adapter:main',
             'servo_adapter = robot_arm.servo_adapter.servo_adapter:main',
             'servo_adapter_dummy = robot_arm.servo_adapter_dummy.servo_adapter_dummy:main',
             'inverse_kinematics = robot_arm.inverse_kinematics.inverse_kinematics:main',
