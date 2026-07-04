@@ -18,10 +18,10 @@ try:
     from .utils import _resolve_resources_dir
     from .web_server import WebsiteInputWebServer
 except ImportError:  # pragma: no cover
-    # Allow running this file directly (outside its package).
-    from robot_arm_2.robot_arm.website_input.state_machine import ControllerStateDispatcher, parse_controller_state  # type: ignore
-    from robot_arm_2.robot_arm.website_input.utils import _resolve_resources_dir  # type: ignore
-    from robot_arm_2.robot_arm.website_input.web_server import WebsiteInputWebServer  # type: ignore
+    # Allow running this file directly (outside its package) when `robot_arm` is importable.
+    from robot_arm.website_input.state_machine import ControllerStateDispatcher, parse_controller_state  # type: ignore
+    from robot_arm.website_input.utils import _resolve_resources_dir  # type: ignore
+    from robot_arm.website_input.web_server import WebsiteInputWebServer  # type: ignore
 
 
 class WebsiteInput(Node):
