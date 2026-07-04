@@ -1,7 +1,7 @@
 """ROS 2 dummy node that simulates the bus servo adapter interface.
 
 Publishes:
-- st3215_angle_read (std_msgs/Float32MultiArray): [0.0, 0.0, 0.0] every 5 seconds
+- st3215_angle_read (std_msgs/Float32MultiArray): [0.0, 0.0, 0.0] every 0.5 seconds
 - /joint_states (sensor_msgs/JointState): current joint angles for RViz visualization
 
 Subscribes:
