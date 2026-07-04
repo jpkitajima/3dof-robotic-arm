@@ -106,8 +106,13 @@ class SvgPointGenerator:
         svg_x = point.real
         svg_y = point.imag
 
-        y_scaled = borders.y_max - (svg_x - min_x) / (max_x - min_x) * borders.y_range
-        z_scaled = borders.z_max - (svg_y - min_y) / (max_y - min_y) * borders.z_range
+        dx = max_x - min_x
+        dy = max_y - min_y
+        if dx == 0 or dy == 0:
+            raise ValueError(f'Invalid SVG bounds (dx={dx}, dy={dy})')
+
+        y_scaled = borders.y_max - (svg_x - min_x) / dx * borders.y_range
+        z_scaled = borders.z_max - (svg_y - min_y) / dy * borders.z_range
         return y_scaled, z_scaled
 
     def _process_svg_path(
