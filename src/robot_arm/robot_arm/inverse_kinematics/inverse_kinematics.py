@@ -151,7 +151,7 @@ class InverseKinematics(Node):
         self._last_joint_radians = (theta1, theta2, theta3)
 
         self.get_logger().info(
-            f'Calculated angles (radians): theta1={math.degrees(theta1)}, theta2={math.degrees(theta2)}, theta3={math.degrees(theta3)}'
+            f'Calculated angles (degrees): theta1={math.degrees(theta1):.3f}, theta2={math.degrees(theta2):.3f}, theta3={math.degrees(theta3):.3f}'
         )
 
         angles = [
