@@ -45,8 +45,9 @@ class ServoAdapterDummy(Node):
         self._timer = self.create_timer(self.PUBLISH_PERIOD_S, self._publish_dummy_read)
 
         self.get_logger().info('ServoAdapterDummy node has been started.')
-        self.get_logger().info('Publishing st3215_angle_read every 5 seconds.')
-
+        self.get_logger().info(
+            f'Publishing st3215_angle_read every {self.PUBLISH_PERIOD_S:.1f} seconds.'
+        )
     def _publish_dummy_read(self) -> None:
         angles_deg = [math.degrees(self._joint_angles[name]) for name in self.SERVO_ID_TO_JOINT.values()]
         msg = Float32MultiArray()
