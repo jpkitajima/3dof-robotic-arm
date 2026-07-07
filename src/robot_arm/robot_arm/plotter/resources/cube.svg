@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <!-- Front face -->
+  <path d="M55 75 L115 75 L115 135 L55 135 Z" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Back face -->
+  <path d="M85 45 L145 45 L145 105 L85 105 Z" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+
+  <!-- Connecting edges -->
+  <path d="M55 75 L85 45" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M115 75 L145 45" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M115 135 L145 105" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M55 135 L85 105" fill="none" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+</svg>

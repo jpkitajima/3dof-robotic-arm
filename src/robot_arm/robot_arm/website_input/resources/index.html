@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>3DOF Robotic Arm Controller</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+
+  <body>
+    <header>
+      <div class="title">
+        <h1>3DOF Robotic Arm Controller</h1>
+        <div class="status" id="status">Connecting…</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="layout">
+        <section class="card">
+          <h2>End Effector Coordinates</h2>
+          <div class="grid">
+            <div class="axis">
+              <label><span>X</span><span class="pill" id="eeX">—</span></label>
+            </div>
+            <div class="axis">
+              <label><span>Y</span><span class="pill" id="eeY">—</span></label>
+            </div>
+            <div class="axis">
+              <label><span>Z</span><span class="pill" id="eeZ">—</span></label>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Arm Position</h2>
+          <div class="axis-controls">
+            <div class="axis-control">
+              <span class="axis-control-label">X Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="y">X+</button>
+                <button class="btn" data-btn="a">X-</button>
+              </div>
+            </div>
+
+            <div class="axis-control">
+              <span class="axis-control-label">Y Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="x">Y+</button>
+                <button class="btn" data-btn="b">Y-</button>
+              </div>
+            </div>
+
+            <div class="axis-control">
+              <span class="axis-control-label">Z Axis</span>
+              <div class="axis-control-buttons">
+                <button class="btn" data-btn="lb">Z+</button>
+                <button class="btn" data-btn="rb">Z-</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Switch</h2>
+          <div class="row">
+            <button class="btn" data-btn="switch_on">Switch On</button>
+            <button class="btn" data-btn="switch_off">Switch Off</button>
+          </div>
+          <div class="row">
+            <button class="btn" id="drawCircle">Draw Circle</button>
+            <button class="btn" id="drawSvg">Draw SVG</button>
+            <button class="btn" id="drawLine">Draw Line</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>Path Programmer</h2>
+          <div class="row">
+            <button class="btn" id="ppStart">start</button>
+            <button class="btn" id="ppCapture">capture current position</button>
+          </div>
+          <ul class="points-list" id="ppPoints"></ul>
+        </section>
+      </div>
+    </main>
+
+    <script src="/static/app.js"></script>
+  </body>
+</html>
