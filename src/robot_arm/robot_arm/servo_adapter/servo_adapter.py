@@ -23,13 +23,16 @@ class ServoAdapter(Node):
     """Minimal servo adapter node scaffold with logging-only callbacks."""
 
     PUBLISH_PERIOD_S = 0.5
-    DEVICE_PATH = '/dev/serial/by-id/usb-1a86_USB_Single_Serial_5A7C117345-if00'
+    DEFAULT_DEVICE_PATH = '/dev/robot_arm_servo'
     SERVO_IDS = (1, 2, 3)
     SERVO_RETRY_DELAY_S = 1.0
     MAX_POSITION = 4095
 
     def __init__(self) -> None:
         super().__init__('servo_adapter')
+
+        self.declare_parameter('device_path', self.DEFAULT_DEVICE_PATH)
+        self._device_path = str(self.get_parameter('device_path').value)
 
         self._controller: ST3215 | None = None
         self._servos: dict[int, object] = {}
@@ -46,6 +49,7 @@ class ServoAdapter(Node):
         self._connect_servo_with_retry()
 
         self.get_logger().info('ServoAdapter node has been started.')
+        self.get_logger().info(f'Using servo device path: {self._device_path}')
         self.get_logger().info('Subscribed to st3215_angle and ready to publish st3215_angle_read.')
 
     def _connect_servo_with_retry(self) -> None:
@@ -55,13 +59,13 @@ class ServoAdapter(Node):
             servos: dict[int, object] = {}
 
             try:
-                controller = ST3215(self.DEVICE_PATH)
+                controller = ST3215(self._device_path)
                 for servo_id in self.SERVO_IDS:
                     servo = controller.wrap_servo(servo_id)
                     current_location = servo.sram.read_current_location()
                     servos[servo_id] = servo
                     self.get_logger().info(
-                        f'Connected to servo {servo_id} on {self.DEVICE_PATH}. '
+                        f'Connected to servo {servo_id} on {self._device_path}. '
                         f'Current location: {current_location}'
                     )
             except (OSError, SerialException, ServoNotRespondingError) as exc:
