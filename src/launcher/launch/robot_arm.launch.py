@@ -29,6 +29,9 @@ def generate_launch_description():
     ld.add_action(DeclareLaunchArgument(
         name='servo_adapter_mode', default_value='both',
         description='Which servo adapter to run: real, dummy, or both'))
+    ld.add_action(DeclareLaunchArgument(
+        name='servo_device_path', default_value='/dev/robot_arm_servo',
+        description='Device path for the real servo controller serial adapter'))
 
     # Use description.launch.py (robot_state_publisher only) instead of
     # display.launch.py to avoid joint_state_publisher competing on /joint_states.
@@ -61,6 +64,7 @@ def generate_launch_description():
             condition=IfCondition(PythonExpression([
                 "'", LaunchConfiguration('servo_adapter_mode'), "' in ['real', 'both']"
             ])),
+            parameters=[{'device_path': LaunchConfiguration('servo_device_path')}],
             output='screen'
         ),
 
