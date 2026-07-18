@@ -20,7 +20,7 @@ dist/
 .ruff_cache/
 
 # ROS 2 / colcon
-install/
+/install/
 log/
 
 # Web tooling (if used)
