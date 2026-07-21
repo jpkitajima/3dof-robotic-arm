@@ -4,6 +4,7 @@ set -euo pipefail
 
 rule_path="/etc/udev/rules.d/99-robot-arm.rules"
 script_name="$(basename "${BASH_SOURCE[0]}")"
+sudo_cmd=()
 
 usage() {
     cat <<EOF
@@ -24,6 +25,16 @@ require_command() {
         echo "Required command '$command_name' was not found." >&2
         exit 1
     fi
+}
+
+init_privilege_command() {
+    if [[ "${EUID}" -eq 0 ]]; then
+        sudo_cmd=()
+        return
+    fi
+
+    require_command sudo
+    sudo_cmd=(sudo)
 }
 
 detect_device_path() {
@@ -71,7 +82,7 @@ write_rule() {
     rule_line="SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"$id_vendor\", ATTRS{idProduct}==\"$id_product\", TAG+=\"uaccess\", SYMLINK+=\"robot_arm_servo\""
 
     echo "Writing udev rule to $rule_path"
-    printf '%s\n' "$rule_line" | sudo tee "$rule_path" >/dev/null
+    printf '%s\n' "$rule_line" | "${sudo_cmd[@]}" tee "$rule_path" >/dev/null
 }
 
 main() {
@@ -85,7 +96,7 @@ main() {
     fi
 
     require_command udevadm
-    require_command sudo
+    init_privilege_command
 
     if [[ -z "$device_path" ]]; then
         device_path="$(detect_device_path)"
@@ -107,8 +118,8 @@ main() {
     write_rule "$id_vendor" "$id_product"
 
     echo "Reloading udev rules..."
-    sudo udevadm control --reload-rules
-    sudo udevadm trigger --name-match="$(basename "$device_path")"
+    "${sudo_cmd[@]}" udevadm control --reload-rules
+    "${sudo_cmd[@]}" udevadm trigger --name-match="$(basename "$device_path")"
 
     echo "Installed udev rule for $device_path"
     echo "Matched attributes: idVendor=$id_vendor, idProduct=$id_product"
