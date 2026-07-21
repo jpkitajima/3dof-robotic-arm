@@ -6,6 +6,11 @@ ros_package="${ROS_JAZZY_PACKAGE:-ros-jazzy-desktop}"
 project_ros_packages=(
     ros-jazzy-urdf-launch
 )
+project_system_packages=(
+    python3-aiohttp
+    python3-serial
+    python3-yaml
+)
 sudo_cmd=()
 
 require_command() {
@@ -121,6 +126,12 @@ install_project_ros_packages() {
     "${sudo_cmd[@]}" apt install -y "${project_ros_packages[@]}"
 }
 
+install_project_system_packages() {
+    echo "Installing project system packages: ${project_system_packages[*]}"
+    "${sudo_cmd[@]}" apt update
+    "${sudo_cmd[@]}" apt install -y "${project_system_packages[@]}"
+}
+
 main() {
     require_command grep
     require_command awk
@@ -133,6 +144,7 @@ main() {
     install_ros_jazzy
     install_ros_dev_tools
     install_project_ros_packages
+    install_project_system_packages
 
     print_post_install_instructions
 }
