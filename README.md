@@ -10,6 +10,7 @@ To allow the servo adapter to open the robot arm USB serial device without runni
 ```
 
 The same script also installs the project's Python dependencies from the local packages.
+If no robot arm serial device is connected, it skips the `udev` step and continues so you can still install an RViz-only setup.
 
 If the device is not auto-detected or you have multiple serial devices connected, pass the target path explicitly:
 

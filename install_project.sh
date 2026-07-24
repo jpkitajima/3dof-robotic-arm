@@ -7,6 +7,18 @@ install_scripts_dir="${script_dir}/scripts/install"
 ros_setup_script="/opt/ros/jazzy/setup.bash"
 device_path="${1:-}"
 
+serial_device_present() {
+	local tty_path
+
+	for tty_path in /dev/ttyACM* /dev/ttyUSB*; do
+		if [[ -e "$tty_path" ]]; then
+			return 0
+		fi
+	done
+
+	return 1
+}
+
 source_setup_script() {
 	local setup_script="$1"
 
@@ -18,8 +30,15 @@ source_setup_script() {
 echo "Installing ROS 2 Jazzy..."
 bash "${install_scripts_dir}/install_ros_jazzy.sh"
 
-echo "Installing udev rule for the robot arm serial device..."
-bash "${install_scripts_dir}/install_udev_rule.sh" "${device_path}"
+if [[ -n "$device_path" ]]; then
+	echo "Installing udev rule for the robot arm serial device..."
+	bash "${install_scripts_dir}/install_udev_rule.sh" "$device_path"
+elif serial_device_present; then
+	echo "Installing udev rule for the detected robot arm serial device..."
+	bash "${install_scripts_dir}/install_udev_rule.sh"
+else
+	echo "No serial device detected. Skipping udev rule installation and continuing with RViz-only setup."
+fi
 
 echo "Installing Python dependencies..."
 bash "${install_scripts_dir}/install_python_deps.sh"
