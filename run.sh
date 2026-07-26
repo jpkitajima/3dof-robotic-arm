@@ -5,6 +5,7 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ros_setup_script="/opt/ros/jazzy/setup.bash"
 workspace_setup_script="${script_dir}/install/setup.bash"
+servo_adapter_mode="${1:-}"
 
 source_setup_script() {
 	local setup_script="$1"
@@ -12,6 +13,24 @@ source_setup_script() {
 	set +u
 	source "$setup_script"
 	set -u
+}
+
+prompt_servo_adapter_mode() {
+	local selected_mode
+
+	while true; do
+		read -r -p "Choose servo adapter mode (dummy/real): " selected_mode
+
+		case "$selected_mode" in
+			dummy|real)
+				servo_adapter_mode="$selected_mode"
+				return 0
+				;;
+			*)
+				echo "Invalid mode '$selected_mode'. Enter 'dummy' or 'real'." >&2
+				;;
+		esac
+		done
 }
 
 if [[ ! -f "$ros_setup_script" ]]; then
@@ -29,4 +48,17 @@ fi
 source_setup_script "$ros_setup_script"
 source_setup_script "$workspace_setup_script"
 
-ros2 launch launcher robot_arm.launch.py servo_adapter_mode:=dummy
+if [[ -z "$servo_adapter_mode" ]]; then
+	prompt_servo_adapter_mode
+fi
+
+case "$servo_adapter_mode" in
+	dummy|real)
+		;;
+	*)
+		echo "Invalid mode '$servo_adapter_mode'. Use 'dummy' or 'real'." >&2
+		exit 1
+		;;
+esac
+
+ros2 launch launcher robot_arm.launch.py "servo_adapter_mode:=${servo_adapter_mode}"

@@ -30,6 +30,9 @@ source_setup_script() {
 echo "Installing ROS 2 Jazzy..."
 bash "${install_scripts_dir}/install_ros_jazzy.sh"
 
+echo "Installing Python dependencies..."
+bash "${install_scripts_dir}/install_python_deps.sh"
+
 if [[ -n "$device_path" ]]; then
 	echo "Installing udev rule for the robot arm serial device..."
 	bash "${install_scripts_dir}/install_udev_rule.sh" "$device_path"
@@ -39,9 +42,6 @@ elif serial_device_present; then
 else
 	echo "No serial device detected. Skipping udev rule installation and continuing with RViz-only setup."
 fi
-
-echo "Installing Python dependencies..."
-bash "${install_scripts_dir}/install_python_deps.sh"
 
 if [[ ! -f "$ros_setup_script" ]]; then
 	echo "ROS Jazzy does not appear to be installed at $ros_setup_script." >&2
