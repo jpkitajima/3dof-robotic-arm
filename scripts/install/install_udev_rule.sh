@@ -85,6 +85,22 @@ write_rule() {
     printf '%s\n' "$rule_line" | "${sudo_cmd[@]}" tee "$rule_path" >/dev/null
 }
 
+wait_for_device_access() {
+    local device_path="$1"
+    local attempt
+    local max_attempts=10
+
+    for attempt in $(seq 1 "$max_attempts"); do
+        if [[ -e "$device_path" && -r "$device_path" && -w "$device_path" ]]; then
+            return 0
+        fi
+
+        sleep 1
+    done
+
+    return 1
+}
+
 main() {
     local device_path="${1:-}"
     local id_vendor
@@ -122,9 +138,13 @@ main() {
     "${sudo_cmd[@]}" udevadm trigger --name-match="$(basename "$device_path")"
     "${sudo_cmd[@]}" udevadm settle
 
+    if ! wait_for_device_access "/dev/robot_arm_servo"; then
+        echo "Warning: /dev/robot_arm_servo is not readable and writable yet." >&2
+        echo "Replug the device if access does not update immediately." >&2
+    fi
+
     echo "Installed udev rule for $device_path"
     echo "Matched attributes: idVendor=$id_vendor, idProduct=$id_product"
-    echo "Replug the device if access does not update immediately."
 }
 
 main "$@"
