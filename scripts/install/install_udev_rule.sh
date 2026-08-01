@@ -120,6 +120,7 @@ main() {
     echo "Reloading udev rules..."
     "${sudo_cmd[@]}" udevadm control --reload-rules
     "${sudo_cmd[@]}" udevadm trigger --name-match="$(basename "$device_path")"
+    "${sudo_cmd[@]}" udevadm settle
 
     echo "Installed udev rule for $device_path"
     echo "Matched attributes: idVendor=$id_vendor, idProduct=$id_product"
