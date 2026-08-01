@@ -5,7 +5,9 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ros_setup_script="/opt/ros/jazzy/setup.bash"
 workspace_setup_script="${script_dir}/install/setup.bash"
+install_scripts_dir="${script_dir}/scripts/install"
 servo_adapter_mode="${1:-}"
+device_path="${2:-}"
 
 source_setup_script() {
 	local setup_script="$1"
@@ -13,6 +15,19 @@ source_setup_script() {
 	set +u
 	source "$setup_script"
 	set -u
+}
+
+install_udev_rule_if_needed() {
+	case "$servo_adapter_mode" in
+		real|both)
+			echo "Installing udev rule for the robot arm serial device..."
+			if [[ -n "$device_path" ]]; then
+				bash "${install_scripts_dir}/install_udev_rule.sh" "$device_path"
+			else
+				bash "${install_scripts_dir}/install_udev_rule.sh"
+			fi
+			;;
+	esac
 }
 
 prompt_servo_adapter_mode() {
@@ -53,12 +68,14 @@ if [[ -z "$servo_adapter_mode" ]]; then
 fi
 
 case "$servo_adapter_mode" in
-	dummy|real)
+	dummy|real|both)
 		;;
 	*)
-		echo "Invalid mode '$servo_adapter_mode'. Use 'dummy' or 'real'." >&2
+		echo "Invalid mode '$servo_adapter_mode'. Use 'dummy', 'real', or 'both'." >&2
 		exit 1
 		;;
 esac
+
+install_udev_rule_if_needed
 
 ros2 launch launcher robot_arm.launch.py "servo_adapter_mode:=${servo_adapter_mode}"

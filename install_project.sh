@@ -5,19 +5,6 @@ set -euo pipefail
 script_dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 install_scripts_dir="${script_dir}/scripts/install"
 ros_setup_script="/opt/ros/jazzy/setup.bash"
-device_path="${1:-}"
-
-serial_device_present() {
-	local tty_path
-
-	for tty_path in /dev/ttyACM* /dev/ttyUSB*; do
-		if [[ -e "$tty_path" ]]; then
-			return 0
-		fi
-	done
-
-	return 1
-}
 
 source_setup_script() {
 	local setup_script="$1"
@@ -33,16 +20,6 @@ bash "${install_scripts_dir}/install_ros_jazzy.sh"
 echo "Installing Python dependencies..."
 bash "${install_scripts_dir}/install_python_deps.sh"
 
-if [[ -n "$device_path" ]]; then
-	echo "Installing udev rule for the robot arm serial device..."
-	bash "${install_scripts_dir}/install_udev_rule.sh" "$device_path"
-elif serial_device_present; then
-	echo "Installing udev rule for the detected robot arm serial device..."
-	bash "${install_scripts_dir}/install_udev_rule.sh"
-else
-	echo "No serial device detected. Skipping udev rule installation and continuing with RViz-only setup."
-fi
-
 if [[ ! -f "$ros_setup_script" ]]; then
 	echo "ROS Jazzy does not appear to be installed at $ros_setup_script." >&2
 	exit 1
@@ -53,5 +30,5 @@ source_setup_script "$ros_setup_script"
 cd "$script_dir"
 colcon build
 
-echo "Setup complete. Replug the robot arm if device access does not update immediately."
+echo "Setup complete."
 echo "You can now run ./run.sh"
