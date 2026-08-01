@@ -118,6 +118,8 @@ main() {
         device_path="$(detect_device_path)"
     fi
 
+    echo "Using serial device path: $device_path"
+
     if [[ ! -e "$device_path" ]]; then
         echo "Device path '$device_path' does not exist." >&2
         exit 1
