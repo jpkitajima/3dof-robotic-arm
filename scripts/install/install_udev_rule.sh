@@ -85,6 +85,22 @@ write_rule() {
     printf '%s\n' "$rule_line" | "${sudo_cmd[@]}" tee "$rule_path" >/dev/null
 }
 
+write_reload_and_trigger_rules_twice() {
+    local device_path="$1"
+    local id_vendor="$2"
+    local id_product="$3"
+    local device_name
+    local pass
+
+    device_name="$(basename "$device_path")"
+
+    for pass in 1 2; do
+        write_rule "$id_vendor" "$id_product"
+        "${sudo_cmd[@]}" udevadm control --reload-rules
+        "${sudo_cmd[@]}" udevadm trigger --action=add --name-match="$device_name"
+    done
+}
+
 wait_for_device_access() {
     local device_path="$1"
     local attempt
@@ -135,11 +151,9 @@ main() {
 
     echo "Using USB IDs: idVendor=$id_vendor, idProduct=$id_product"
 
-    write_rule "$id_vendor" "$id_product"
-
     echo "Reloading udev rules..."
-    "${sudo_cmd[@]}" udevadm trigger --action=add --name-match="$(basename "$device_path")"
-    "${sudo_cmd[@]}" udevadm control --reload-rules
+    write_reload_and_trigger_rules_twice "$device_path" "$id_vendor" "$id_product"
+    
 
     if ! wait_for_device_access "/dev/robot_arm_servo"; then
         echo "Warning: /dev/robot_arm_servo is not readable and writable yet." >&2
