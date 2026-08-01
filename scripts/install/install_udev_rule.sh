@@ -138,9 +138,8 @@ main() {
     write_rule "$id_vendor" "$id_product"
 
     echo "Reloading udev rules..."
-    "${sudo_cmd[@]}" udevadm control --reload-rules
     "${sudo_cmd[@]}" udevadm trigger --action=add --name-match="$(basename "$device_path")"
-    "${sudo_cmd[@]}" udevadm settle
+    "${sudo_cmd[@]}" udevadm control --reload-rules
 
     if ! wait_for_device_access "/dev/robot_arm_servo"; then
         echo "Warning: /dev/robot_arm_servo is not readable and writable yet." >&2
