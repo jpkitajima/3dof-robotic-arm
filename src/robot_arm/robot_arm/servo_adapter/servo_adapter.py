@@ -23,7 +23,7 @@ class ServoAdapter(Node):
     """Minimal servo adapter node scaffold with logging-only callbacks."""
 
     PUBLISH_PERIOD_S = 0.5
-    DEVICE_PATH = '/dev/serial/by-id/usb-1a86_USB_Single_Serial_5A7C117345-if00'
+    DEVICE_PATH = '/dev/robot_arm_servo'
     SERVO_IDS = (1, 2, 3)
     SERVO_RETRY_DELAY_S = 1.0
     MAX_POSITION = 4095
