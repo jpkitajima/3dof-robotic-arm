@@ -81,7 +81,6 @@ write_rule() {
 
     rule_line="SUBSYSTEM==\"tty\", ATTRS{idVendor}==\"$id_vendor\", ATTRS{idProduct}==\"$id_product\", TAG+=\"uaccess\", SYMLINK+=\"robot_arm_servo\""
 
-    echo "Writing udev rule to $rule_path"
     printf '%s\n' "$rule_line" | "${sudo_cmd[@]}" tee "$rule_path" >/dev/null
 }
 
