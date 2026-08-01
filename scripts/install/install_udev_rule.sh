@@ -133,6 +133,8 @@ main() {
         exit 1
     fi
 
+    echo "Using USB IDs: idVendor=$id_vendor, idProduct=$id_product"
+
     write_rule "$id_vendor" "$id_product"
 
     echo "Reloading udev rules..."
