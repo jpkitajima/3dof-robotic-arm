@@ -21,7 +21,7 @@ If the device is not auto-detected or you have multiple serial devices connected
 To install or refresh only the `udev` rule, use:
 
 ```bash
-./install_udev_rule.sh /dev/ttyACM0
+./scripts/install/install_udev_rule.sh /dev/ttyACM0
 ```
 
 After the script completes, replug the robot arm if device access does not update immediately.
