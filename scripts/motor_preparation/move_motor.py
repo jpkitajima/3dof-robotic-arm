@@ -14,6 +14,7 @@ MIN_SERVO_ID = 1
 MAX_SERVO_ID = 253
 MIN_TARGET_POSITION = 0
 MAX_TARGET_POSITION = 4095
+HALFWAY_POSITION = (MIN_TARGET_POSITION + MAX_TARGET_POSITION) // 2
 UDEV_INSTALL_SCRIPT = FilePath(__file__).resolve().parents[1] / "install" / "install_udev_rule.sh"
 
 
@@ -42,11 +43,11 @@ def prompt_for_servo_id() -> int:
 def prompt_for_target_position() -> int:
     response = input(
         "Enter the target position "
-        f"({MIN_TARGET_POSITION}-{MAX_TARGET_POSITION}) [{MIN_TARGET_POSITION}]: "
+        f"({MIN_TARGET_POSITION}-{MAX_TARGET_POSITION}) [{HALFWAY_POSITION}]: "
     ).strip()
 
     if not response:
-        return MIN_TARGET_POSITION
+        return HALFWAY_POSITION
 
     try:
         target_position = int(response)
