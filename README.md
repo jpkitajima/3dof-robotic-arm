@@ -87,6 +87,29 @@ When `run.sh` starts in `real` mode, it installs the required `udev` rule and la
 
 You control the physical robot through the same browser UI used for the simulated robot.
 
+## C++ Cartesian Command Node
+
+The `cartesian_command_cpp` package contains a minimal C++ publisher for the existing
+`cartesian_xyz` topic. It publishes the target `[0.20, 0.05, 0.15]` meters once, after
+a subscriber (the inverse-kinematics node) is available. It is not included in the
+default launch.
+
+Build the package from the workspace root after sourcing ROS 2 Jazzy:
+
+```bash
+colcon build --packages-select cartesian_command_cpp
+source install/setup.bash
+```
+
+With the robot nodes running in another terminal, explicitly run the publisher:
+
+```bash
+ros2 run cartesian_command_cpp cartesian_command_cpp_node
+```
+
+This command sends a movement target and can move the physical arm. Test in `dummy`
+mode first, and run it only when the target movement is intended.
+
 ## Web Interface
 
 The browser UI is served by the ROS application at http://localhost:8080/input.
@@ -125,4 +148,5 @@ These actions are useful as demos and as examples of scripted robot motion.
 - `run.sh`: launches the project in `dummy` or `real` mode
 - `src/launcher`: ROS launch files and RViz configuration
 - `src/robot_arm`: robot nodes, kinematics, web server, plotting, and servo adapters
+- `src/cartesian_command_cpp`: minimal C++ Cartesian target publisher
 - `docs/images`: screenshots and reference images used in this README
