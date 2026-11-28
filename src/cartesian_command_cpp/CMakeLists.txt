@@ -6,11 +6,12 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
 endif()
 
 find_package(ament_cmake REQUIRED)
+find_package(angles REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(std_msgs REQUIRED)
 
-add_executable(cartesian_command_cpp_node src/cartesian_command_cpp_node.cpp)
-ament_target_dependencies(cartesian_command_cpp_node rclcpp std_msgs)
+add_executable(cartesian_command_cpp_node src/inverse_kinematics_cpp_node.cpp)
+ament_target_dependencies(cartesian_command_cpp_node angles rclcpp std_msgs)
 
 install(TARGETS
   cartesian_command_cpp_node

@@ -82,10 +82,9 @@ def generate_launch_description():
         ),
 
         Node(
-            package='robot_arm',
-            executable='inverse_kinematics',
-            name='inverse_kinematics',
-            parameters=[{'elbow': 'up'}],
+            package='cartesian_command_cpp',
+            executable='cartesian_command_cpp_node',
+            name='inverse_kinematics_cpp',
             output='screen'
         ),
 
