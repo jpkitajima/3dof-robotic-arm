@@ -16,6 +16,8 @@ public:
   static constexpr double PEN_OFFSET = 0.02;  // Offset for the pen in meters
   static constexpr double L3 = 0.13075 + PEN_OFFSET;  // Length of the third arm segment in meters
 
+  static constexpr double MOTOR_2_OFFSET = 0.02183;  // Offset between motor 2 and motor 1 axes in meters
+
   static constexpr int THETA_1_CHANNEL = 1;
   static constexpr int THETA_2_CHANNEL = 2;
   static constexpr int THETA_3_CHANNEL = 3;
@@ -70,7 +72,9 @@ private:
   {
     const double theta1_radians = calculate_theta_1_radians(y, x);
     const double h = z - L1;
-    const double r = std::sqrt(x * x + y * y);
+    const double r = std::sqrt(
+      std::pow(x + MOTOR_2_OFFSET * std::cos(theta1_radians), 2) +
+      std::pow(y + MOTOR_2_OFFSET * std::sin(theta1_radians), 2));
 
     const auto theta3_candidates_radians = calculate_theta_3_radians(h, r);
     if (!theta3_candidates_radians.has_value()) {
