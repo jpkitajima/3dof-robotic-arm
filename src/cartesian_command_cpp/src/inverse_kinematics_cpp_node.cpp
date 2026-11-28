@@ -83,8 +83,8 @@ private:
       calculate_theta_2_radians(h, r, theta3_positive_radians);
 
     return std::array<double, 3>{
-      angles::to_degrees(theta1_radians),
-      angles::to_degrees(theta2_radians),
+      -angles::to_degrees(theta1_radians),
+      -angles::to_degrees(theta2_radians),
       angles::to_degrees(theta3_positive_radians)};
   }
 
